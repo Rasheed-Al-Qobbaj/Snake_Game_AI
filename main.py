@@ -22,6 +22,7 @@ class Snake:
         self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
         self.color = (0, 255, 0)
         self.eaten = False
+        self.score = 0
         self.game_over = False
         self.move_counter = 0
         self.move_frequency = 10  # Increase this value to make the snake move slower
@@ -54,6 +55,7 @@ class Snake:
     def eat(self, food):
         if self.get_head_position() == food.position:
             self.length += 5
+            self.score += 1
             self.eaten = True
             food.randomize_position()
 
@@ -94,6 +96,7 @@ def display_game_over_screen(screen):
     return button_rect
 
 def main():
+    global replay_button
     pygame.init()
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -101,6 +104,7 @@ def main():
     snake = Snake()
     food = Food()
 
+    font = pygame.font.Font(None, 36)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -122,6 +126,9 @@ def main():
                     food = Food()
 
         screen.fill((0, 0, 0))
+
+        score_text = font.render(f"Score: {snake.score}", True, (255, 255, 255))  # Render the score as a text surface
+        screen.blit(score_text, (10, 10))
 
         snake.eat(food)
         snake.move()
