@@ -7,7 +7,7 @@ import random
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-CELL_SIZE = 10
+CELL_SIZE = 10 # Define the size of the snake and food
 
 # Define directions
 UP = (0, -1)
@@ -36,7 +36,7 @@ class Snake:
             head = self.get_head_position()
             new_position = (head[0] + self.direction[0] * CELL_SIZE, head[1] + self.direction[1] * CELL_SIZE)
             if new_position[0] < 0 or new_position[0] >= SCREEN_WIDTH or new_position[1] < 0 or new_position[
-                1] >= SCREEN_HEIGHT:
+                1] >= SCREEN_HEIGHT or new_position in self.positions:
                 self.game_over = True
             else:
                 self.positions.insert(0, new_position)
@@ -47,6 +47,9 @@ class Snake:
 
     def get_head_position(self):
         return self.positions[0]
+    
+    def get_positions(self):
+        return self.positions
 
     def eat(self, food):
         if self.get_head_position() == food.position:
@@ -61,7 +64,10 @@ class Food:
         self.randomize_position()
 
     def randomize_position(self):
-        self.position = (random.randint(0, SCREEN_WIDTH // CELL_SIZE - 1) * CELL_SIZE, random.randint(0, SCREEN_HEIGHT // CELL_SIZE - 1) * CELL_SIZE)
+        position = (random.randint(0, SCREEN_WIDTH // CELL_SIZE - 1) * CELL_SIZE, random.randint(0, SCREEN_HEIGHT // CELL_SIZE - 1) * CELL_SIZE)
+        while position in Snake().get_positions():
+            position = (random.randint(0, SCREEN_WIDTH // CELL_SIZE - 1) * CELL_SIZE, random.randint(0, SCREEN_HEIGHT // CELL_SIZE - 1) * CELL_SIZE)
+        self.position = position
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.position[0], self.position[1], CELL_SIZE, CELL_SIZE))
